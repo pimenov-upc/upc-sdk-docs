@@ -30,6 +30,60 @@ export default defineConfig({
 			social: [
 				{icon: 'github', label: 'GitHub', href: 'https://github.com/pimenov-upc/upc-sdk-docs'}
 			], 
+      defaultLocale: 'uk',
+      locales: {
+        uk: {
+          label: 'Українська',
+        },
+        en: {
+          label: 'English',
+        },
+        // hu: {
+        //   label: 'Magyar',
+        // },
+        // de: {
+        //   label: 'Deutsch',
+        // },
+        // bg: {
+        //   label: 'Български',
+        // },
+        // bs: {
+        //   label: 'Bosanski',
+        // },
+        // cz: {
+        //   label: 'Čeština',
+        // },
+        // fr: {
+        //   label: 'Français',
+        // },
+        // hr: {
+        //   label: 'Hrvatski',
+        // },
+        // it: {
+        //   label: 'Italiano',
+        // },
+        // pl: {
+        //   label: 'Polski',
+        // },
+        // ro: {
+        //   label: 'Română',
+        // },
+        // rs: {
+        //   label: 'Srpski',
+        // },
+        // ru: {
+        //   label: 'Русский',
+        // },
+        // sk: {
+        //   label: 'Slovenčina',
+        // },
+        // sl: {
+        //   label: 'Slovenščina',
+        // },
+        // sq: {
+        //   label: 'Shqip',
+        // },
+      },
 			sidebar,
 			customCss: [
 				'./src/styles/index.css',
