@@ -23,6 +23,12 @@ const translations = {
   errors: {
     uk: "Помилки",
   },
+  hostCodes: {
+    uk: "Коди відповідей HostCode",
+  },
+  tranCodes: {
+    uk: "Коди відповідей TranCode",
+  },
   artifacts: {
     uk: "Артефакти",
   },
@@ -34,6 +40,15 @@ const translations = {
   },
   checkoutXml: {
     uk: "UpcCheckoutXml",
+  },
+  refundXml: {
+    uk: "UpcRefundXml",
+  },
+  tokenServiceXml: {
+    uk: "UpcTokenServiceXml",
+  },
+  tokenService: {
+    uk: "UpcTokenService",
   },
 };
 
@@ -56,6 +71,8 @@ export default [
       { label: "Functions", translations: translations.functions, slug: "general/common/functions" },
       { label: "Classes", translations: translations.classes, slug: "general/common/classes" },
       { label: "Errors", translations: translations.errors, slug: "general/common/errors" },
+      { label: "Host Codes Responses", translations: translations.hostCodes, slug: "general/common/host-codes" },
+      { label: "Transaction Codes Responses", translations: translations.tranCodes, slug: "general/common/transaction-codes" },
     ],
   },
   {
@@ -77,6 +94,21 @@ export default [
         label: "UpcCheckoutXml",
         translations: translations.checkoutXml,
         slug: "artifacts/checkout-xml"
+      },
+      {
+        label: "UpcRefundXml",
+        translations: translations.refundXml,
+        slug: "artifacts/refund-xml"
+      },
+      {
+        label: "UpcTokenServiceXml",
+        translations: translations.tokenServiceXml,
+        slug: "artifacts/token-service-xml"
+      },
+      {
+        label: "UpcTokenService",
+        translations: translations.tokenService,
+        slug: "artifacts/token-service"
       },
     ],
   },
