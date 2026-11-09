@@ -1,0 +1,35 @@
+{
+  "name": "@upc/sdk-docs",
+  "version": "0.1.0",
+  "description": "The UPC-SDK is a software development kit designed to facilitate interaction with the UPC API. This documentation provides an overview of the SDK's features, installation instructions, and usage examples to help developers integrate UPC API functionality into their applications.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pimenov-upc/upc-sdk-docs.git"
+  },
+  "keywords": [
+    "upc",
+    "e-commerce",
+    "ecommerce",
+    "api",
+    "sdk",
+    "documentation"
+  ],
+  "bugs": {
+    "url": "https://github.com/pimenov-upc/upc-sdk-docs/issues"
+  },
+  "homepage": "https://github.com/pimenov-upc/upc-sdk-docs#readme",
+  "dependencies": {
+    "@astrojs/starlight": "^0.42.10",
+    "@expressive-code/plugin-line-numbers": "^0.44.3",
+    "astro": "^7.4.7",
+    "starlight-links-validator": "^0.27.0",
+    "starlight-theme-rapide": "^0.6.0"
+  }
+}

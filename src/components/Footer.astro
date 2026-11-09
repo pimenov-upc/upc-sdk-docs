@@ -1,0 +1,20 @@
+---
+import Default from '@astrojs/starlight/components/Footer.astro';
+import version from "../../version.js";
+const isHomepage = Astro.locals.starlightRoute.id === '';
+
+---
+
+{
+    isHomepage ? (
+       <footer class="page-footer">
+           <div>Copyright {new Date().getFullYear()} by <a href="https://upc.ua">UPC</a></div>
+           <div><small>🌟🌟🌟 UPC SDK DOCS {version} 🌟🌟🌟</small></div>
+           <div><small>Powered by <a href="https://starlight.astro.build/uk/">Astro Starlight</a></small></div>
+       </footer>
+    ) : (
+        <Default {...Astro.props}>
+            <slot />
+        </Default>
+    )
+}
