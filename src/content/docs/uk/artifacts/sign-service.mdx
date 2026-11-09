@@ -2,3 +2,67 @@
 title: UpcSignService
 slug: uk/artifacts/sign-service
 ---
+
+Сервіс `UpcSignService` відповідає за підписання запитів клієнта і валідацію відповідей сервера.
+Сервіс представлений класом `UpcSignService`.
+
+## Встановлення
+
+Для встановлення необхідно виконати команду:
+
+```shell
+npm i @upc/sign-service
+```
+
+## Методи
+
+Клас `UpcSignService` надає статичні методи для підписання запитів і перевірки відповідей.
+
+- `sign()` - підписання JSON запитів
+- `signXml()` - підписання XML запитів
+- `verify()` - перевірка JSON/String відповідей
+- `verifyXml()` - перевірка XML відповідей
+
+## Алгоритми
+
+Для підписання можливо використовувати наступні алгоритми:
+
+- `SHA256` - значення для параметра `RS256` (значення за замовченням)
+- `SHA512` - значення для параметра `RS512`
+
+## JSON (JWS)
+
+Для роботи з призначені методи `sign()` та `verify()`.
+
+### Підписання JWS
+
+Для підписання JSON об'єкта і формування JWS необхідно викликати метод `sign(...)` з відповідними параметрами.
+
+```ts
+const payload = {
+  merchantId: '1750000',
+  terminalId: 'E1750000',
+}
+const privateKey = 'path/to/private/key'
+const passphrase = 'private_key_password'
+const algorithm = 'RS256'
+
+const signedPayload = UpcSignService.sign(
+  payload, 
+  privateKey, 
+  passphrase, 
+  algorithm
+)
+```
+
+Після підписання ви отримуєте закодований JSON/JWS об'єкт формату:
+
+```json
+{
+  header: {...},
+  payload: {...},
+  signature: {...}
+}
+```
+
+Цей об'єкт готовий до передачі в бік сервісів UPC, які підтримують JWS.
