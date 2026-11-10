@@ -2,7 +2,13 @@ const translations = {
   gettingStarted: {
     uk: "Початок роботи",
   },
+  certificatesAndKeys: {
+    uk: "Сертифікати та ключі",
+  },
   overview: {
+    uk: "Огляд UPC SDK",
+  },
+  commonOverview: {
     uk: "Огляд",
   },
   common: {
@@ -37,6 +43,9 @@ const translations = {
   },
   xmlUtils: {
     uk: "XmlUtils",
+  },
+  operationCodes: {
+    uk: "Коди операцій",
   },
   artifacts: {
     uk: "Артефакти",
