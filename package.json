@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "astro dev",
+    "dev": "node --watch --watch-path=./i18n.mjs --watch-path=./sidebar.mjs ./node_modules/astro/bin/astro.mjs dev",
     "build": "astro build",
     "preview": "astro preview"
   },

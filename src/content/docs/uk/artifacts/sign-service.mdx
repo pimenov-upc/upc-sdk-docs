@@ -89,7 +89,7 @@ const signedPayload = UpcSignService.sign(
 
 ```ts
 // publicKey - шлях до сертифікату або публічного ключа сервера
-const result = await UpcService.method() // абстрактний приклад
+const result = ... // відповідь сервера
 const verifier = UpcSignService.verify(result, publicKey)
 
 if (!verifier) {
@@ -150,6 +150,25 @@ const signedXml = UpcSignService.signXml(
     </Signature>
 </GetBinInfoRequest>
 ```
+
+:::note
 Всі необхідні поля в сігнатурі підпису метод `signXml()` додасть самостійно.
+:::
 
 Підписаний XML можна передавати на обробку серверу UPC.
+
+### Перевірка XML відповіді
+
+Щоб перевірити достовірність відповіді (що відповідь прийшла від довіреного серверу), необхідно використати метод `verifyXml()`.
+
+```ts
+// publicKey - шлях до сертифікату або публічного ключа сервера
+const xml = ... // відповідь сервера
+const verifier = UpcSignService.verifyXml(xml, publicKey)
+
+if (!verifier) {
+  throw new Error('Помилка верифікації');
+}
+
+// ... подальші дії з отриманою відповіддю
+```
