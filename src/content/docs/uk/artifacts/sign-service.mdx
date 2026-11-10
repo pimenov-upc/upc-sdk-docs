@@ -42,6 +42,17 @@ npm i @upc/sign-service
 
 Для підписання JSON об'єкта і формування JWS необхідно викликати метод `sign(...)` з відповідними параметрами.
 
+Сігнатура метода:
+```ts
+sign(
+  payload: string | Buffer,
+  privateKey: string | Buffer,
+  passphrase?: string,
+  algorithm: SigningAlgorithm = 'RS256'
+): SignedPayload {}
+```
+
+Приклад:
 ```ts
 const payload = {
   merchantId: '1750000',
@@ -52,7 +63,7 @@ const passphrase = 'private_key_password'
 const algorithm = 'RS256'
 
 const signedPayload = UpcSignService.sign(
-  payload, 
+  JSON.stringify(payload), 
   privateKey, 
   passphrase, 
   algorithm
@@ -87,6 +98,15 @@ const signedPayload = UpcSignService.sign(
 Для перевірки того, що ви дійсно отримали відповідь від довіреного сервера, необхідно верифікувати відповідь.
 Верифікація відповіді в форматі JWS здійснюється за допомогою метода `verify()`.
 
+Сігнатура метода:
+```ts
+verify(
+  signedPayload: SignedPayload | string, 
+  publicKey: string | Buffer
+): boolean {}
+```
+
+Приклад:
 ```ts
 // publicKey - шлях до сертифікату або публічного ключа сервера
 const result = ... // відповідь сервера
@@ -107,6 +127,17 @@ if (!verifier) {
 
 Для підписання Xml об’єкта необхідно викликати метод signXml(...) з відповідними параметрами.
 
+Сігнатура метода:
+```ts
+signXml(
+  xml: string,
+  privateKey: string | Buffer,
+  passphrase?: string,
+  algorithm: SigningAlgorithm = 'RS256'
+): SignedPayload {}
+```
+
+Приклад:
 ```ts
 const xml = ... // raw xml string
 const signedXml = UpcSignService.signXml(
@@ -161,6 +192,15 @@ const signedXml = UpcSignService.signXml(
 
 Щоб перевірити достовірність відповіді (що відповідь прийшла від довіреного серверу), необхідно використати метод `verifyXml()`.
 
+Сігнатура метода:
+```ts
+verifyXml(
+  xml: string, 
+  publicKey: string | Buffer
+): boolean {}
+```
+
+Приклад:
 ```ts
 // publicKey - шлях до сертифікату або публічного ключа сервера
 const xml = ... // відповідь сервера
@@ -172,3 +212,11 @@ if (!verifier) {
 
 // ... подальші дії з отриманою відповіддю
 ```
+
+## Сертифікат чи публічний ключ
+
+Для перевірки відповіді ви можете використовувати сертифікат довіреного сервера або його публічний ключ.
+
+:::note
+Сертифікат можна використовувати за умови, що з нього можна вивести публічний ключ!
+:::
