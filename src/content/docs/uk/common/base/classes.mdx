@@ -5,13 +5,29 @@ slug: uk/common/base/classes
 
 `UpcService` - є базовим абстрактним класом. Від нього наслідуються всі інші класи (виключення UpcSignService).
 
+Сігнатура класу:
+```ts
+abstract class UpcBinService {
+  constructor(
+    resource: string, 
+    protected readonly options: UpcServiceOptions
+  ) {
+    ...
+  }
+  ...
+}
+```
+
 Приклад наслідування:
 ```ts
 class UpcBinService extends UpcService {
-  constructor(resource: string, options: UpcServiceOptions) {
+  constructor(
+    resource: string, 
+    protected readonly options: UpcServiceOptions) 
+  {
     super(resource, options)
   }
-  ...
+  ...реалізація методів класу
 }
 ```
 
