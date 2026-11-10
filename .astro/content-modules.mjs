@@ -17,7 +17,6 @@ export default new Map([
 ["src/content/docs/en/common/http-transport/http-transport.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fen%2Fcommon%2Fhttp-transport%2Fhttp-transport.mdx&astroContentModuleFlag=true")],
 ["src/content/docs/en/common/overview.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fen%2Fcommon%2Foverview.mdx&astroContentModuleFlag=true")],
 ["src/content/docs/en/common/xml-utils/xml-utils.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fen%2Fcommon%2Fxml-utils%2Fxml-utils.mdx&astroContentModuleFlag=true")],
-["src/content/docs/en/index.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fen%2Findex.mdx&astroContentModuleFlag=true")],
 ["src/content/docs/en/overview.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fen%2Foverview.mdx&astroContentModuleFlag=true")],
 ["src/content/docs/uk/artifacts/bin-info.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fuk%2Fartifacts%2Fbin-info.mdx&astroContentModuleFlag=true")],
 ["src/content/docs/uk/artifacts/checkout-xml.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fuk%2Fartifacts%2Fcheckout-xml.mdx&astroContentModuleFlag=true")],
@@ -36,6 +35,5 @@ export default new Map([
 ["src/content/docs/uk/common/http-transport/http-transport.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fuk%2Fcommon%2Fhttp-transport%2Fhttp-transport.mdx&astroContentModuleFlag=true")],
 ["src/content/docs/uk/common/overview.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fuk%2Fcommon%2Foverview.mdx&astroContentModuleFlag=true")],
 ["src/content/docs/uk/common/xml-utils/xml-utils.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fuk%2Fcommon%2Fxml-utils%2Fxml-utils.mdx&astroContentModuleFlag=true")],
-["src/content/docs/uk/index.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fuk%2Findex.mdx&astroContentModuleFlag=true")],
 ["src/content/docs/uk/overview.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fuk%2Foverview.mdx&astroContentModuleFlag=true")]]);
 		
