@@ -3,41 +3,105 @@ title: UpcBinInfo
 slug: uk/artifacts/bin-info
 ---
 
-BinInfo - надає можливість отримати інформацію про банківський BIN (Bank Identification /tNumber). Запит відправляється методом POST на URL. Він має містити дані у форматі XML, де основні елементи запиту включають ідентифікатори торговця, терміналу та BIN.
-
-
-Сервіс представлений класом `UpcBinInfo`.
+Сервіс `UpcBinInfo` дає змогу отримувати інформацію про BIN (Bank Identification Number) через сервіс UPC Bin Info. Доступні два методи: XML із підписаним XML-запитом і JSON із підписаним JWS-запитом.
 
 ## Встановлення
 
-Для встановлення необхідно виконати команду:
-
-```shell
-npm i @upc/bin-info
+```bash
+npm install @upc/bin-info
 ```
 
-## Клас
+## Налаштування
 
-Клас `UpcBinInfo` має методи, які дозволяють отримати інформацію про банківський BIN.
-
-### Створення екземпляра класу
+Створіть екземпляр `UpcBinInfo`, передавши назву середовища та облікові дані сервісу:
 
 ```ts
-const options: UpcServiceOptions = {...}
-const binInfo = new UpcBinInfo(options)
+import { UpcBinInfo } from '@upc/bin-info';
+
+const binInfo = new UpcBinInfo('Test', {
+  merchantId: 'your-merchant-id',
+  terminalId: 'your-terminal-id',
+  privateKey: 'path/to/your-private-key',
+  passphrase: 'your-passphrase',
+  publicKey: 'path/to/server-public-key-or-certificate',
+});
 ```
 
-Параметри екземпляра класу:
+Використовуйте `'Test'` для тестового середовища або `'Production'` для робочого. 
+
+`privateKey` і `passphrase` використовуються для підписання запитів, а `publicKey` — для перевірки підпису відповідей. 
+
+Передайте відкритий ключ або сертифікат сервера, призначений для вибраного протоколу: XML чи JSON/JWS. 
+
+:::note
+Зберігайте приватний ключ і його пароль у захищеному сховищі конфігурації; не додавайте їх до репозиторію.
+:::
+
+У параметрах `UpcBinInfo` можна передати такі необов’язкові параметри:
+
+| Параметр     | Значення за замовчуванням | Опис                                                                                                                                                                                  |
+| ------------ | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `timeout`    | `60000`                   | Час очікування відповіді в мілісекундах.                                                                                                                                              |
+| `logging`    | `false`                   | Вмикає журналювання URL, запитів і відповідей. Журнали можуть містити дані запитів і підписаний XML, тому використовуйте цей параметр обережно, особливо у production.                |
+| `returnType` | `'json'`                  | Впливає на `getBinInfoXml`: значення `'json'` повертає розібрану XML-відповідь як JSON-об’єкт; значення `raw` або `string` повертає XML-рядок. На результат `getBinInfo` не впливає. |
+
+## Запит XML
+
+Метод `getBinInfoXml(bin, trackingId?)` надсилає підписаний XML-запит і перевіряє підпис відповіді. За замовчуванням (`returnType: 'json'`) відповідь розбирається в JSON-об’єкт:
+
 ```ts
-interface UpcServiceOptions {
-  merchantId: string;
-  terminalId: string;
-  privateKey: string;
-  passphrase: string;
-  publicKey: string;
-  timeout?: number = 60_000;
-  logging?: boolean = false;
-  returnType?: string = 'json';
-  algo?: unknown = 'RS256';
+import { UpcBinInfo } from '@upc/bin-info';
+
+const binInfo = new UpcBinInfo(...);
+const result = await binInfo.getBinInfoXml('123456', 'optional-tracking-id');
+
+console.log(result);
+```
+
+`bin` — BIN, для якого потрібно отримати інформацію. `trackingId` необов’язковий; якщо його не передати, SDK сформує його з поточної часової позначки в мілісекундах. Порожній рядок буде переданий без заміни.
+
+Щоб отримати перевірений XML-вміст як рядок, задайте значення `returnType` як `raw` або `string`:
+
+```ts
+const binInfoXml = new UpcBinInfo('Test', {
+  ...
+  returnType: 'raw',
+});
+
+const resultXml = await binInfoXml.getBinInfoXml('123456', 'optional-tracking-id');
+
+console.log(resultXml);
+```
+
+## Запит JSON/JWS
+
+:::note
+Підтримка JWS з боку сервера знаходиться в розробці.
+:::
+
+Метод `getBinInfo(bin, trackingId?)` надсилає JSON-запит, підписаний у форматі JWS, і перевіряє підпис відповіді. Результат — декодований payload відповіді як рядок UTF-8; метод не перетворює цей рядок на JSON-об’єкт автоматично.
+
+```ts
+import { UpcBinInfo } from '@upc/bin-info';
+
+const binInfo = new UpcBinInfo(...);
+const result = await binInfo.getBinInfo('123456', 'optional-tracking-id');
+
+console.log(result);
+```
+
+Якщо `trackingId` не вказати або передати порожній рядок, SDK сформує його з поточної часової позначки в мілісекундах.
+
+## Обробка помилок
+
+Проміс відхиляється, якщо HTTP-запит завершився помилкою, сервер повернув порожню чи некоректну відповідь або перевірка підпису не пройшла. Обробляйте помилки в місці виклику:
+
+```ts
+try {
+  const result = await binInfo.getBinInfoXml('123456');
+  console.log(result);
+} catch (error) {
+  console.error('Не вдалося отримати інформацію про BIN:', error);
 }
 ```
+
