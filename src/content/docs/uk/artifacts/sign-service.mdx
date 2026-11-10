@@ -14,6 +14,10 @@ slug: uk/artifacts/sign-service
 npm i @upc/sign-service
 ```
 
+:::note
+Всі артефакти сервісів SDK вже мають в собі `UpcSignService` і вміють підписувати і верифікувати відповіді.
+:::
+
 ## Методи
 
 Клас `UpcSignService` надає статичні методи для підписання запитів і перевірки відповідей.
@@ -32,7 +36,7 @@ npm i @upc/sign-service
 
 ## JSON (JWS)
 
-Для роботи з призначені методи `sign()` та `verify()`.
+Для роботи з даними в форматі `JWS` призначені методи `sign()` та `verify()`.
 
 ### Підписання JWS
 
@@ -55,7 +59,7 @@ const signedPayload = UpcSignService.sign(
 )
 ```
 
-Після підписання ви отримуєте закодований JSON/JWS об'єкт формату:
+Після підписання ви отримуєте закодований в `Base64Url` JSON/JWS об'єкт формату:
 
 ```json
 {
@@ -65,4 +69,87 @@ const signedPayload = UpcSignService.sign(
 }
 ```
 
+Приклад підписаного запиту:
+
+```json
+{
+    "header": "eyJhbGciOiJSUzI1NiJ9",
+    "payload": "ewogICAgIk1lcmNoYW50SUQiOiAiMTc1MDAwMCIsCiAgICAiVGVybWluYWxJRCI6ICJFMTc1MDAwMCIsCiAgICAiVHJhY2tpbmdJZCI6ICIyMzQxMzUxMmZ3c2QiLAogICAgImNhcmQiOiB7CiAgICAgICAgIkNhcmROdW0iOiAiNTUwNjkwMDQ4MDEwMDAwNiIsCiAgICAgICAgImV4cE1vbnRoIjogIjA0IiwKICAgICAgICAiZXhwWWVhciI6ICIyMDI0IgogICAgfQp9",
+    "signature": "Z4Ptjdjbb-4TXjGJak8yU9MTtgV0qU9o7DXfkhecO-768itNl6jRPpg_qrTmBijHvGSB2ULkFbpd1pZTTsiwjojiE5n7JesrjHdxdN5oftTH88LduHKpCJB4ej0pPLJikdhZOrFuppjiKRc0v40_HO4Ip1Q2Dtg5U9jGM-fHzzcx8aGfzHB64gkrYKlujva49X4OR6pXn3HWDPpFDkqzf0mplP5RVRHo7FMV79hz1Z1BuggycvXK72UwiuBe2UdGHXWLOelw-Zqxq80DLgRbrFDNMxn-OhfcQ6FCeDaM8UYusa8ErkXljJ8piiWlsuR2NgZdl-hcarzsmP1IYdiuaA"
+}
+```
+
 Цей об'єкт готовий до передачі в бік сервісів UPC, які підтримують JWS.
+
+### Верифікація відповіді JWS
+
+Якщо сервер розпізнав ваш запит (за допомогою завантаженого в UPC вашого публічного ключа або сертифікату), він так само формує навантаження і підписує його.
+Для перевірки того, що ви дійсно отримали відповідь від довіреного сервера, необхідно верифікувати відповідь.
+Верифікація відповіді в форматі JWS здійснюється за допомогою метода `verify()`.
+
+```ts
+// publicKey - шлях до сертифікату або публічного ключа сервера
+const result = await UpcService.method() // абстрактний приклад
+const verifier = UpcSignService.verify(result, publicKey)
+
+if (!verifier) {
+  throw new Error('Помилка верифікації');
+}
+
+// ... подальші дії з отриманою відповіддю
+```
+
+## XML
+
+Для роботи з даними в форматі `XML` призначені методи `signXml()` та `verifyXml()`.
+
+### Підписання XML
+
+Для підписання Xml об’єкта необхідно викликати метод signXml(...) з відповідними параметрами.
+
+```ts
+const xml = ... // raw xml string
+const signedXml = UpcSignService.signXml(
+  payload, 
+  privateKey, 
+  passphrase, 
+  algorithm
+)
+```
+
+Після підписання в ваш XML буде додано відповідний тег `<Signature>`.
+
+Приклад підписаного XML
+
+```xml
+<GetBinInfoRequest>
+    <MerchantId>********</MerchantId>
+    <TerminalId>********</TerminalId>
+    <TrackingId>********</TrackingId>
+    <GetBinInfo>
+        <Bin>51207000</Bin>
+    </GetBinInfo>
+    <Signature>
+        <SignedInfo>
+            <CanonicalizationMethod/>
+            <SignatureMethod/>
+            <Reference URI="">
+                <Transforms>
+                    <Transform/>
+                </Transforms>
+                <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256 "/>
+                <DigestValue>bdJTaGWcCu14aflcgA8bSK+gKdA=</DigestValue>
+            </Reference>
+        </SignedInfo>
+        <SignatureValue>aBOIneD1sIa6AII57BJ5LQqJSP18ix1T7JFQ9zF1noFoX7RicX7tvq9N99OX34h7nHYC3BM8JUv1
+            vghAJx4oXF9/Wlkr+hXCMprC+GCKSaz6z9fQV9DfjedUtZqPDC76mcDnOhLInzBaRWlpxmymGlkR
+            8Ru2DwZaPfxOjrgDAaxZiwnzk/sry4j4q1s0UlPK27q0xodY0JdSk+aAEvHqVYfodnibplYLGJ
+            eQqnhMCRdy4njwHVW15JXRVpfy1UgTm7rBk2LT9R44EnyTv8JXcSfJLareaFramJOtMDE61/TPQ3
+            ubTfnvijyFTtMqYCfMUUhVdLu+4PGLyG+W26iw==
+        </SignatureValue>
+    </Signature>
+</GetBinInfoRequest>
+```
+Всі необхідні поля в сігнатурі підпису метод `signXml()` додасть самостійно.
+
+Підписаний XML можна передавати на обробку серверу UPC.
