@@ -2,3 +2,42 @@
 title: UpcBinInfo
 slug: uk/artifacts/bin-info
 ---
+
+BinInfo - надає можливість отримати інформацію про банківський BIN (Bank Identification /tNumber). Запит відправляється методом POST на URL. Він має містити дані у форматі XML, де основні елементи запиту включають ідентифікатори торговця, терміналу та BIN.
+
+
+Сервіс представлений класом `UpcBinInfo`.
+
+## Встановлення
+
+Для встановлення необхідно виконати команду:
+
+```shell
+npm i @upc/bin-info
+```
+
+## Клас
+
+Клас `UpcBinInfo` має методи, які дозволяють отримати інформацію про банківський BIN.
+
+### Створення екземпляра класу
+
+```ts
+const options: UpcServiceOptions = {...}
+const binInfo = new UpcBinInfo(options)
+```
+
+Параметри екземпляра класу:
+```ts
+interface UpcServiceOptions {
+  merchantId: string;
+  terminalId: string;
+  privateKey: string;
+  passphrase: string;
+  publicKey: string;
+  timeout?: number = 60_000;
+  logging?: boolean = false;
+  returnType?: string = 'json';
+  algo?: unknown = 'RS256';
+}
+```
