@@ -5,6 +5,9 @@ const translations = {
   certificatesAndKeys: {
     uk: "Сертифікати та ключі",
   },
+  environments: {
+    uk: "Робочі середовища",
+  },
   overview: {
     uk: "Огляд UPC SDK",
   },
@@ -24,7 +27,7 @@ const translations = {
     uk: "Функції",
   },
   classes: {
-    uk: "Класи",
+    uk: "Базовий клас UpcService",
   },
   errors: {
     uk: "Помилки",

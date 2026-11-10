@@ -2,3 +2,123 @@
 title: UpcRefundXml
 slug: uk/artifacts/refund-xml
 ---
+
+`UpcFastRefund` — формує XML-запит на повернення коштів, підписує його за наявності `privateKey`, надсилає до UPC і перевіряє підпис відповіді.
+
+## Імпорт і створення клієнта
+
+Публічна точка входу пакета експортує клас `UpcFastRefund`:
+
+```ts
+import { UpcFastRefund } from '@upc/fastrefund-xml';
+
+const fastRefund = new UpcFastRefund('Test', {
+  merchantId: 'your_merchant_id',
+  terminalId: 'your_terminal_id',
+  privateKey: 'path/to/your_private_key',
+  passphrase: 'private_key_password',
+  publicKey: 'path/to/server_certificate_or_public_key',
+});
+```
+
+Значення в прикладі — заповнювачі, їх потрібно замінити на тестові реквізити. Не зберігайте ключі, паролі або production-реквізити в коді чи системі контролю версій.
+
+### Середовище
+
+Перший аргумент конструктора визначає середовище:
+
+| Значення       | Базова URL-адреса         |
+| -------------- | ------------------------- |
+| `'test'`       | `https://ecg.test.upc.ua` |
+| `'production'` | `https://secure.upc.ua`   |
+
+Використовуйте `'test'` під час розробки. Запити до `'production'` можуть виконувати реальні операції.
+
+Замість назви середовища можна передати власну базову HTTPS URL. Вона має бути без шляху, query-параметрів і фрагмента; клієнт сам додає шлях API.
+
+### Параметри конструктора
+
+| Параметр     | Обов’язковий | Типове значення | Опис                                                                                                 |
+| ------------ | ------------ | --------------- | ---------------------------------------------------------------------------------------------------- |
+| `merchantId` | Так          | —               | Ідентифікатор продавця.                                                                              |
+| `terminalId` | Так          | —               | Ідентифікатор термінала.                                                                             |
+| `privateKey` | Так          | —               | Приватний ключ для підписання запиту.                                                                |
+| `passphrase` | Так          | —               | Пароль приватного ключа.                                                                             |
+| `publicKey`  | Так          | —               | Публічний ключ для перевірки відповіді UPC.                                                          |
+| `timeout`    | Ні           | `60000` мс      | Час очікування HTTP-запиту.                                                                          |
+| `logging`    | Ні           | `false`         | Увімкнути діагностичне журналювання.                                                                 |
+| `returnType` | Ні           | `'json'`        | Якщо значення точно `'json'`, відповідь XML перетворюється на об’єкт; інакше повертається XML-рядок. |
+
+
+## Методи повернення
+
+Усі методи асинхронні та повертають `Promise`. Кожен `payload` має спільні поля `approvalCode`, `rrn`, суму, валюту, причину та необов’язковий `trackingId`. Запит також містить `merchantId` і `terminalId` із параметрів конструктора.
+
+| Метод                                       | Додаткові поля                                           |
+| ------------------------------------------- | -------------------------------------------------------- |
+| `fastRefundWithCard(payload)`               | `cardNumber` — номер картки отримувача.                  |
+| `fastRefundWithoutCard(payload)`            | Немає.                                                   |
+| `fastRefundWithToken(payload)`              | `tokenId` — ідентифікатор токена UPC.                    |
+| `fastRefundWithExternalProcessing(payload)` | `tid`, `recipientCardNumber`, `recipientCardHolderName`. |
+
+`fastRefundWithExternalProcessing` формує `OriginalTranRefund` з `TID`, `RecipientCardNumber` і сумою. Хоча його тип `payload` також містить `approvalCode` та `rrn`, ці поля наразі не потрапляють у сформований XML. Цей метод не додає блок `Token`.
+
+Спільні поля `payload`:
+
+| Поле           | Тип                      | Опис                                                                  |
+| -------------- | ------------------------ | --------------------------------------------------------------------- |
+| `approvalCode` | `string`                 | Код авторизації початкової операції.                                  |
+| `rrn`          | `string`                 | RRN початкової операції.                                              |
+| `amount`       | `number \| string`       | Сума повернення; клієнт передає її в XML як рядок.                    |
+| `currencyCode` | `string`                 | Код валюти.                                                           |
+| `reason`       | `string`                 | Причина повернення.                                                   |
+| `trackingId`   | `string` (необов’язкове) | Ідентифікатор запиту. Якщо не передано, генерується з поточного часу. |
+
+## Приклад: повернення без номера картки
+
+```ts
+const result = await fastRefund.fastRefundWithoutCard({
+  approvalCode: 'test-approval-code',
+  rrn: 'test-rrn',
+  amount: '100.00',
+  currencyCode: '980',
+  reason: 'Customer request',
+  trackingId: 'refund-001',
+});
+
+console.log(result);
+```
+
+Коли `returnType` не змінено, `result` — результат перетворення відповіді XML у JSON-об’єкт. Щоб отримати сирий XML, створіть клієнт із параметром `returnType: 'xml'`.
+
+## Як проходить запит
+
+1. Метод формує операцію `FastRefundRequest` у XML.
+2. За замовчуванням клієнт підписує XML приватним ключем і надсилає `POST` на `/mt/public/fast-refund/doFastRefund` з типом вмісту `application/xml`.
+3. Клієнт перевіряє підпис відповіді за допомогою `publicKey`. Якщо перевірка не проходить, метод завершується помилкою формату `[UPC] XML verification failed for operation <назва методу>`, наприклад `[UPC] XML verification failed for operation FastRefundWithCard`.
+4. Відповідь повертається як JSON-об’єкт або XML-рядок відповідно до `returnType`.
+
+## Помилки та журналювання
+
+Помилки HTTP-транспорту передаються виклику методу; помилка перевірки підпису також відхиляє `Promise`. Обробляйте їх через `try/catch`:
+
+```ts
+try {
+  const result = await fastRefund.fastRefundWithoutCard(payload);
+  // Обробіть результат.
+} catch (error) {
+  // Повідомте про помилку без виведення реквізитів платежу чи ключів.
+}
+```
+
+> [!WARNING]
+> `logging: true` виводить у журнал непідписаний і підписаний XML запиту. XML може містити номер картки або дані токена. Не вмикайте це журналювання для реальних платіжних даних і не передавайте журнали, що містять чутливу інформацію.
+
+## Перевірка пакета
+
+З кореня монорепозиторію можна запустити перевірку типів і тести пакета:
+
+```bash
+npm run check --workspace @upc/fastrefund-xml
+npm test --workspace @upc/fastrefund-xml
+```

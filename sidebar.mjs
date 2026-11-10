@@ -7,6 +7,7 @@ export default [
     items: [
       { label: "Overview UPC SDK", translations: translations.overview, slug: "overview" },
       { label: "Certificates and Keys", translations: translations.certificatesAndKeys, slug: "certificates" },
+      { label: "Work Environments", translations: translations.environments, slug: "environments" },
     ],
   },
   {
@@ -18,7 +19,7 @@ export default [
       { label: "Constants", translations: translations.constants, slug: "common/base/constants" },
       { label: "Structures and Types", translations: translations.structuresAndTypes, slug: "common/base/structures" },
       { label: "Functions", translations: translations.functions, slug: "common/base/functions" },
-      { label: "Classes", translations: translations.classes, slug: "common/base/classes" },
+      { label: "Base class UpcService", translations: translations.classes, slug: "common/base/classes" },
       { label: "Errors", translations: translations.errors, slug: "common/base/errors" },
     ],
   },

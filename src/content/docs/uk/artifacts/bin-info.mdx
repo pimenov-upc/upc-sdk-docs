@@ -18,7 +18,7 @@ npm install @upc/bin-info
 ```ts
 import { UpcBinInfo } from '@upc/bin-info';
 
-const binInfo = new UpcBinInfo('Test', {
+const binInfo = new UpcBinInfo('test', {
   merchantId: 'your-merchant-id',
   terminalId: 'your-terminal-id',
   privateKey: 'path/to/your-private-key',
@@ -27,7 +27,18 @@ const binInfo = new UpcBinInfo('Test', {
 });
 ```
 
-Використовуйте `'Test'` для тестового середовища або `'Production'` для робочого. 
+### Середовище
+
+Перший аргумент конструктора визначає середовище:
+
+| Значення       | Базова URL-адреса         |
+| -------------- | ------------------------- |
+| `'test'`       | `https://ecg.test.upc.ua` |
+| `'production'` | `https://secure.upc.ua`   |
+
+Використовуйте `'test'` під час розробки. Запити до `'production'` можуть виконувати реальні операції.
+
+### Приватний і публічний ключі
 
 `privateKey` і `passphrase` використовуються для підписання запитів, а `publicKey` — для перевірки підпису відповідей. 
 
@@ -36,6 +47,8 @@ const binInfo = new UpcBinInfo('Test', {
 :::note
 Зберігайте приватний ключ і його пароль у захищеному сховищі конфігурації; не додавайте їх до репозиторію.
 :::
+
+### Опціональні параметри
 
 У параметрах `UpcBinInfo` можна передати такі необов’язкові параметри:
 
