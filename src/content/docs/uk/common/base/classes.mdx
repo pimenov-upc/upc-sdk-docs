@@ -1,11 +1,19 @@
 ---
-title: Common classes
+title: Базовий клас UpcService
 slug: uk/common/base/classes
 ---
 
-## Базовий клас UpcService
-
 `UpcService` - є базовим абстрактним класом. Від нього наслідуються всі інші класи (виключення UpcSignService).
+
+Приклад наслідування:
+```ts
+class UpcBinService extends UpcService {
+  constructor(resource: string, options: UpcServiceOptions) {
+    super(resource, options)
+  }
+  ...
+}
+```
 
 :::note
 Створити екземпляр класу `UpcService` напряму неможливо.
