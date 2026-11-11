@@ -31,8 +31,8 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: {
-        uk: `UPC SDK v${version}`,
-        en: `UPC SDK v${version}`,
+        uk: `UPC Service SDK v${version}`,
+        en: `UPC Service SDK v${version}`,
       },
 			editLink: {
 				baseUrl: 'https://github.com/pimenov-upc/upc-sdk-docs/edit/master/',

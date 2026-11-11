@@ -7,7 +7,7 @@ slug: uk/common/base/classes
 
 Сігнатура класу:
 ```ts
-abstract class UpcBinService {
+abstract class UpcService {
   constructor(
     resource: string, 
     protected readonly options: UpcServiceOptions
@@ -55,13 +55,15 @@ class UpcBinService extends UpcService {
 
 #### Додаткові опції (options)
 
+Додаткові параметри описуються інтерфейсом `UpcServiceOptions` і мають наступні члени:
+
 | Параметр     | Обов’язковий | Типове значення | Опис                                                                                                 |
 | ------------ | ------------ | --------------- | ---------------------------------------------------------------------------------------------------- |
 | `merchantId` | Так          | —               | Ідентифікатор продавця.                                                                              |
 | `terminalId` | Так          | —               | Ідентифікатор термінала.                                                                             |
-| `privateKey` | Так          | —               | Приватний ключ для підписання запиту.                                                                |
-| `passphrase` | Так          | —               | Пароль приватного ключа.                                                                             |
-| `publicKey`  | Так          | —               | Публічний ключ для перевірки відповіді UPC.                                                          |
+| `privateKey` | Ні          | —               | Приватний ключ для підписання запиту.                                                                |
+| `passphrase` | Ні          | —               | Пароль приватного ключа.                                                                             |
+| `publicKey`  | Ні          | —               | Публічний ключ для перевірки відповіді UPC.                                                          |
 | `timeout`    | Ні           | `60000` мс      | Час очікування HTTP-запиту.                                                                          |
 | `logging`    | Ні           | `false`         | Увімкнути діагностичне журналювання.                                                                 |
 | `returnType` | Ні           | `'json'`        | Якщо значення точно `'json'`, відповідь XML перетворюється на об’єкт; інакше повертається XML-рядок. |
@@ -88,3 +90,77 @@ const binInfo = new UpcBinInfo('test', {
 - `sendJson()` - відправляє JWS запит
 - `resolveXmlResponse()` - перевіряє і повертає результат XML запиту
 - `resolveJsonResponse()` - перевіряє і повертає результат JWS запиту
+
+#### merchantPayload()
+
+Метод додає до параметрів запиту значення `MerchantId` та `TerminalId`.
+
+```ts
+async getBinInfoXml(bin: string, trackingId?: string): Promise<any> {
+  const payload: XmlObject = {
+    ...this.merchantPayload(),
+    TrackingId: trackingId ?? `${Date.now()}`,
+    GetBinInfo: {
+      Bin: bin,
+    },
+  };
+  ...
+}
+```
+
+#### isJsonResponse()
+
+Метод перевіряє, чи є відповідь сервера в форматі JWS, а саме чи є відповідь об'єктом з полями `header`, `payload` та `signature`.
+Метод використовується в методі `sendJson()` для перевірки відповідності формату запиту.
+
+Сігнатура метода:
+
+```ts
+protected isJsonResponse(
+  value: unknown
+): value is UpcJsonResponse {}
+```
+
+#### sendXml()
+
+Метод використовується для відправлення на сервер запиту в форматі XML.
+
+Сігнатура метода:
+```ts
+protected async sendXml(
+  endpoint: string, 
+  xml: string
+): Promise<UpcXmlResponse> {}
+```
+
+#### sendJson()
+
+Метод використовується для відправлення на сервер запиту в форматі JWS.
+
+Сігнатура метода:
+```ts
+protected async sendJson(
+  endpoint: string,
+  json: JsonObject | UpcJsonRequest
+): Promise<UpcJsonResponse | UpcJsonResponseString> {}
+```
+
+#### resolveXmlResponse()
+
+Метод перевіряє підпис відповіді сервера (за наявності публічного ключа чи сертифіката сервера) та повертає результат в залежності від параметра `returnType`.
+Необов'язковий параметр `operation` слугує для конретизації операції у випадку помилки.
+
+Сігнатура метода:
+```ts
+protected resolveXmlResult(result: any, operation: string = ''): any {}
+```
+
+#### resolveJsonResponse()
+
+Метод перевіряє підпис відповіді сервера (за наявності публічного ключа чи сертифіката сервера) та повертає декодований результат.
+Необов'язковий параметр `operation` слугує для конретизації операції у випадку помилки.
+
+Сігнатура метода:
+```ts
+protected resolveJsonResult(result: any, operation: string = ''): any {}
+```

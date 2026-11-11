@@ -1,4 +1,38 @@
 ---
-title: Common constants, structures and classes
+title: Загальні константи, типи та класи
 slug: uk/common/overview
 ---
+
+`UPC Service SDK` містить декілька загальних модулів, які експортують базовий клас, додаткові функції, структури, типи та константи.
+
+Додаткові модулі:
+
+- `@upc/common`
+- `@upc/http-transport`
+- `@upc/xml`
+
+## @upc/common
+
+Модуль експортує:
+
+- базовий клас для сервісів `UpcService`
+- загальні константи `UPC_RESOURCE`, `UPC_RETURN_TYPE`, `UPC_HOST_CODE`, `UPC_TRAN_CODE`
+- структури `UpcServiceOptions`, `UpcJsonRequest`, `UpcJsonResponse`
+- типи `UpcJsonResponseString`, `UpcXmlResponse`
+
+## @upc/http-transport
+
+Цей модуль пакета `@upc/http-transport` надсилає HTTP-запити через вбудований
+у середовище виконання `fetch`. Він додає тайм-аут, готує тіло запиту,
+перетворює відповідь у потрібний формат і надає спеціальну помилку для
+відповідей із неуспішним HTTP-статусом.
+
+Модуль експортує:
+
+- типи `HttpRequest`, `HttpReturnType`, `HttpMethod`, `FetchError`
+- функції fetchWithTimeout, 'get', 'post', 'put', 'del', 'patch', 'head', 'options', 'trace', 'connect'
+- клас `HttpTransport` (default export)
+
+[Детальніше про HttpTransport](../../common/http-transport/http-transport/)
+
+## @upc/xml

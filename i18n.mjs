@@ -9,7 +9,7 @@ const translations = {
     uk: "Робочі середовища",
   },
   overview: {
-    uk: "Огляд UPC SDK",
+    uk: "Огляд UPC Service SDK",
   },
   commonOverview: {
     uk: "Огляд",
@@ -39,7 +39,7 @@ const translations = {
     uk: "Коди TranCode",
   },
   utilities: {
-    uk: "Утиліти",
+    uk: "Утилітарні модулі",
   },
   httpTransport: {
     uk: "HttpTransport",

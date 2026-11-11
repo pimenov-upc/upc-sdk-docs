@@ -2,3 +2,181 @@
 title: HttpTransport
 slug: uk/common/http-transport/http-transport
 ---
+
+Цей модуль пакета `@upc/http-transport` надсилає HTTP-запити через вбудований
+у середовище виконання `fetch`. Він додає тайм-аут, готує тіло запиту,
+перетворює відповідь у потрібний формат і надає спеціальну помилку для
+відповідей із неуспішним HTTP-статусом.
+
+### Швидкий старт
+
+```ts
+import HttpTransport from '@upc/http-transport';
+
+const api = new HttpTransport('https://api.example.com');
+
+const users = await api.get('/users', { returnType: 'json' });
+```
+
+`users` має тип `unknown`: модуль не знає наперед, яку саме структуру повертає
+сервер. Перевірте або звузьте тип даних перед використанням їхніх властивостей.
+
+### Створення транспорту
+
+```ts
+const api = new HttpTransport('https://api.example.com', 10_000);
+```
+
+Конструктор приймає:
+
+| Аргумент | Тип | Значення за замовчуванням | Призначення |
+|---|---|---|---|
+| `baseUrl` | `string` | обов’язковий | Основна адреса API. |
+| `timeout` | `number` | `60000` мс | Час очікування запиту за замовчуванням. |
+
+Адреса запиту утворюється простим об’єднанням `baseUrl` та `endpoint`. Наприклад,
+для `baseUrl` зі значенням `https://api.example.com` передавайте endpoint
+`/users`.
+
+Властивість `api.base` повертає базову адресу. Властивість `api.response`
+повертає останній `Response`, отриманий через методи `get`, `post`, `put`,
+`patch`, `delete`, `options`, `head`, `connect` або `trace`. До першого такого
+запиту вона дорівнює `null`. Сам `Response` уже може бути прочитаний під час
+перетворення результату.
+
+### Методи запитів
+
+Методи екземпляра мають такі форми:
+
+| Метод | Використання |
+|---|---|
+| `get(endpoint, options?)` | Отримати ресурс. |
+| `post(endpoint, body?, options?)` | Створити ресурс або надіслати дані. |
+| `put(endpoint, body?, options?)` | Замінити ресурс або надіслати дані. |
+| `patch(endpoint, body?, options?)` | Частково оновити ресурс. |
+| `delete(endpoint, body?, options?)` | Видалити ресурс. |
+| `options(endpoint, body?, options?)` | Надіслати запит `OPTIONS`. |
+| `head(endpoint, body?, options?)` | Надіслати запит `HEAD`. |
+| `connect(endpoint, body?, options?)` | Надіслати запит `CONNECT`. |
+| `trace(endpoint, body?, options?)` | Надіслати запит `TRACE`. |
+
+Методи повертають `Promise<unknown>`. Вони читають тіло відповіді відповідно до
+параметра `returnType`, який можна передати в об’єкті `options`:
+
+```ts
+const result = await api.post(
+  '/users',
+  { name: 'Олена' },
+  { returnType: 'json', timeout: 5_000 }
+);
+```
+
+У `options` можна передати:
+
+| Поле | Тип | Призначення |
+|---|---|---|
+| `body` | `unknown` | Тіло запиту. У методах `post` та інших воно передається окремим аргументом. |
+| `options` | `RequestInit` | Налаштування `fetch`, наприклад заголовки та `credentials`. |
+| `timeout` | `number` | Тайм-аут цього запиту в мілісекундах; перевизначає значення конструктора. |
+| `returnType` | `HttpReturnType` | Формат, у якому прочитати тіло відповіді. |
+
+### Формати відповіді
+
+| Значення | Результат |
+|---|---|
+| `'auto'` | Визначає формат за заголовком `Content-Type`: JSON, текст або `Blob`. Це значення за замовчуванням для методів екземпляра. |
+| `'json'` | Результат `response.json()`. |
+| `'text'` | Результат `response.text()`. |
+| `'blob'` | Результат `response.blob()`. |
+| `'arrayBuffer'` | Результат `response.arrayBuffer()`. |
+| `'bytes'` | `Uint8Array`; використовується `response.bytes()`, якщо цей метод доступний, інакше — `arrayBuffer()`. |
+| `'formData'` | Результат `response.formData()`. |
+| `'raw'` | Сам об’єкт `Response`, без читання його тіла. |
+
+Якщо викликати `api.request(endpoint, method, requestOptions)` напряму, він
+поверне `Response` і не змінить властивість `api.response`. Для нього потрібно
+передати `requestOptions`, навіть якщо об’єкт порожній.
+
+### Тіло запиту та заголовки
+
+Для методів екземпляра об’єкти та масиви серіалізуються у JSON. У такому разі
+модуль автоматично додає `Content-Type: application/json`, якщо цей заголовок ще
+не заданий. Рядки, `FormData`, `URLSearchParams`, `Blob`, `ArrayBuffer` та його
+представлення передаються як є. Для методу `GET` і методу `HEAD` тіло не
+надсилається.
+
+```ts
+const response = await api.post(
+  '/files',
+  new FormData(),
+  { returnType: 'raw' }
+);
+```
+
+Для `FormData` не задавайте `Content-Type` вручну: браузер має встановити його
+разом із параметром межі даних. Можна передати власні заголовки через
+`options.options`, наприклад:
+
+```ts
+const result = await api.get('/profile', {
+  options: {
+    headers: { Authorization: 'Bearer <token>' }
+  },
+  returnType: 'json'
+});
+```
+
+### Допоміжні функції
+
+Модуль також експортує окремі функції `fetchWithTimeout`, `get`, `post`, `put`,
+`patch`, `del`, `options`, `head`, `connect` і `trace`. Вони повертають
+`Promise<Response>` і не перетворюють тіло відповіді.
+
+```ts
+import { get } from '@upc/http-transport';
+
+const response = await get('https://api.example.com/users');
+const users = await response.json();
+```
+
+Допоміжні функції не мають базової адреси. Їхні параметри — повна адреса,
+необов’язковий `RequestInit` і необов’язковий тайм-аут. Для `post`, `put`,
+`patch`, `del`, `options`, `head`, `connect` та `trace` сигнатура має вигляд:
+`(url, body?, options?, timeout?)`. Тіло, яке є звичайним об’єктом або масивом,
+серіалізується в JSON, але ці функції самі не додають заголовок
+`Content-Type`.
+
+### Обробка помилок
+
+Для HTTP-відповіді з неуспішним статусом запит завершується помилкою
+`FetchError`. Вона містить:
+
+- `status` — HTTP-статус відповіді;
+- `response` — об’єкт `Response`;
+- `data` — додаткові дані з адресою запиту й тайм-аутом.
+
+```ts
+import { FetchError } from '@upc/http-transport';
+
+try {
+  await api.get('/users');
+} catch (error) {
+  if (error instanceof FetchError) {
+    const status = error.status;
+    // Обробіть HTTP-помилку відповідно до статусу.
+  } else {
+    // Мережева помилка, скасування за тайм-аутом або помилка читання відповіді.
+    throw error;
+  }
+}
+```
+
+Мережева помилка, скасування запиту тайм-аутом або помилка розбору відповіді не
+перетворюється на `FetchError` і передається виклику як є. Тайм-аут скасовує
+запит через `AbortController`.
+
+### Експорти пакета
+
+Пакет експортує `HttpTransport` як експорт за замовчуванням, а також іменовані
+експорти `HttpRequest`, `HttpReturnType`, `HttpMethod`, `FetchError`,
+`fetchWithTimeout` та допоміжні функції запитів.

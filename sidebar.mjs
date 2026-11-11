@@ -61,7 +61,7 @@ export default [
     ],
   },
   {
-    label: "Utilities",
+    label: "Utility modules",
     translations: translations.utilities,
     collapsed: true,
     items: [
