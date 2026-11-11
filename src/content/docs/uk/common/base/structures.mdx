@@ -1,4 +1,73 @@
 ---
-title: Common structures and types
+title: Структури та типи
 slug: uk/common/base/structures
 ---
+
+Модуль `@upc/common` експортує наступні типи і структури:
+
+- `UpcServiceOptions`
+- `UpcJsonRequest`
+- `UpcJsonResponse`
+- `UpcJsonResponseString`
+- `UpcXmlResponse`
+
+## UpcServiceOptions
+
+Всі артефакти SDK при створенні екземпляра класу приймають другим параметром додаткові опції.
+Ці опції описані в структурі `UpcServiceOptions`.
+
+```ts
+interface UpcServiceOptions {
+  merchantId: string;
+  terminalId: string;
+  privateKey?: string;
+  passphrase?: string;
+  publicKey?: string;
+  timeout?: number;
+  logging?: boolean;
+  returnType?: string;
+  algo?: unknown;
+}
+```
+
+### Опис полів
+
+| Поле | Опис |
+| --- | --- |
+| `merchantId` | Ваш ідентифікатор мерчанта |
+| `terminalId` | Ідентифікатор вашого терміналу |
+| `privateKey` | Шлях до вашого приватного ключа, або буфер в якій він завантажений |
+| `passphrase` | Пароль від вашого приватного ключа |
+| `publicKey` | Шлях до сертифікату або публічного ключа сервера UPC, або буфер в якій він завантажений |
+| `timeout` | Інтервал очікування виконання операції (за замовченням 60 сек) |
+| `logging` | Логування в консоль операцій |
+| `returnType` | Використовується для операцій в XML форматі запитів. Визначає в якому форматі ви отримаєте відповідь. Може приймати значення `json`, `raw`, `string`. За замовченням - `json`. |
+| `algo` | Визначає алгоритм шифрування. Може приймати значення RS256 або RS512. Значення за замовченням - `RS256` |
+
+## UpcJsonRequest, UpcJsonResponse
+
+Ці структури в поточній версії є синонімами та мають наступне визначення:
+
+```ts
+interface UpcJsonRequest {
+  header: string;
+  payload: string;
+  signature: string;
+}
+
+interface UpcJsonResponse extends UpcJsonRequest {}
+```
+
+Структури UpcJsonRequest та UpcJsonResponse використовуються для взаємодії з сервером UPC в форматі JWS.
+
+## UpcJsonResponseString
+
+Цей тип дорівнює строки і використовується в разі, коли від сервера отримано не JSON, а строку, де відповідні значення полів розділені крапкою.
+
+```
+header.payload.signature
+```
+
+## UpcXmlResponse
+
+Цей тип описує `raw` строку XML значення.
