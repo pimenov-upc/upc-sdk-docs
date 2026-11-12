@@ -2,3 +2,48 @@
 title: Common functions
 slug: uk/common/base/functions
 ---
+
+Модуль `upc@common` експортує додаткові утилітарні функції:
+
+- `resolveBaseUrl()`
+- `resolveHostCode()`
+- `resolveTranCode`
+
+## resolveBaseUrl()
+
+Функція перевіряє назву середовища або адресу UPC та повертає її origin.
+
+```ts
+import { resolveBaseUrl } from '@upc/common';
+
+const target = resolveBaseUrl('test');
+console.log(target); // will return 'https://ecg.test.upc.ua'
+```
+
+## resolveHostCode()
+
+Функція перетворює код хоста на код-рядок і локалізований опис.
+
+```ts
+import { resolveHostCode } from '@upc/common';
+
+const codeEn = resolveHostCode('000', 'en');
+console.log(code); // will return {code: '000', name: 'Transaction approved'}
+
+const codeUk = resolveHostCode('000', 'uk');
+console.log(code); // will return {code: '000', name: 'Успішна транзакція'}
+```
+
+## resolveTranCode()
+
+Функція перетворює код транзакції на код-рядок і локалізований опис.
+
+```ts
+import { resolveTranCode } from '@upc/common';
+
+const codeEn = resolveTranCode('000', 'en');
+console.log(code); // will return {code: '000', name: 'Transaction successful'}
+
+const codeUk = resolveHostCode('000', 'uk');
+console.log(code); // will return {code: '000', name: 'Успішна транзакція'}
+```
