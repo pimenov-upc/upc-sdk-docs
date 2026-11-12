@@ -30,7 +30,7 @@ const translations = {
     uk: "Базовий клас UpcService",
   },
   errors: {
-    uk: "Помилки",
+    uk: "Обробка помилок",
   },
   hostCodes: {
     uk: "Коди HostCode",

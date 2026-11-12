@@ -21,12 +21,32 @@ export default [
       { label: "Functions", translations: translations.functions, slug: "common/base/functions" },
       { label: "Base class UpcService", translations: translations.classes, slug: "common/base/classes" },
       { label: "Errors", translations: translations.errors, slug: "common/base/errors" },
+      {
+        label: "HttpTransport",
+        translations: translations.httpTransport,
+        slug: "common/http-transport/http-transport"
+      },
+      {
+        label: "XmlUtils",
+        translations: translations.xmlUtils,
+        slug: "common/xml-utils/xml-utils"
+      },
+      {
+        label: "Host Codes",
+        translations: translations.hostCodes,
+        slug: "common/codes/host-codes"
+      },
+      {
+        label: "Transaction Codes",
+        translations: translations.tranCodes,
+        slug: "common/codes/transaction-codes"
+      },
     ],
   },
   {
     label: "Artifacts",
     translations: translations.artifacts,
-    collapsed: true,
+    collapsed: false,
     items: [
       {
         label: "UpcSignService",
@@ -60,38 +80,18 @@ export default [
       },
     ],
   },
-  {
-    label: "Utility modules",
-    translations: translations.utilities,
-    collapsed: true,
-    items: [
-      {
-        label: "HttpTransport",
-        translations: translations.httpTransport,
-        slug: "common/http-transport/http-transport"
-      },
-      {
-        label: "XmlUtils",
-        translations: translations.xmlUtils,
-        slug: "common/xml-utils/xml-utils"
-      },
-    ],
-  },
-  {
-    label: "Operation Codes",
-    translations: translations.operationCodes,
-    collapsed: true,
-    items: [
-      {
-        label: "Host Codes",
-        translations: translations.hostCodes,
-        slug: "common/codes/host-codes"
-      },
-      {
-        label: "Transaction Codes",
-        translations: translations.tranCodes,
-        slug: "common/codes/transaction-codes"
-      },
-    ],
-  },
+  // {
+  //   label: "Utility modules",
+  //   translations: translations.utilities,
+  //   collapsed: true,
+  //   items: [
+  //   ],
+  // },
+  // {
+  //   label: "Operation Codes",
+  //   translations: translations.operationCodes,
+  //   collapsed: true,
+  //   items: [
+  //   ],
+  // },
 ];
