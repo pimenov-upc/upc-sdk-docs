@@ -16,9 +16,19 @@ slug: uk/common/base/functions
 ```ts
 import { resolveBaseUrl } from '@upc/common';
 
-const target = resolveBaseUrl('test');
-console.log(target); // will return 'https://ecg.test.upc.ua'
+const targetTest = resolveBaseUrl('test');
+console.log(targetTest); // will return 'https://ecg.test.upc.ua'
+
+const targetProd = resolveBaseUrl('production');
+console.log(targetProd); // will return 'https://secure.upc.ua'
+
+const targetCustom = resolveBaseUrl('https://domain.com:12345/other/path');
+console.log(targetCustom); // will return 'https://domain.com:12345'
 ```
+
+:::note
+Артефакти UPC Service SDK вже мають вбудовану функцію `resolveBaseUrl()`.
+:::
 
 ## resolveHostCode()
 
