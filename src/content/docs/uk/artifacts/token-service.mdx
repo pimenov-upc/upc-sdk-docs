@@ -2,3 +2,184 @@
 title: UpcTokenService
 slug: uk/artifacts/token-service
 ---
+
+`@upc/token-service` — TypeScript-клієнт для UPC Token Service. Він формує
+JSON-запити, підписує їх за допомогою `@upc/sign-service`, надсилає через HTTPS
+і перевіряє підпис відповіді.
+
+## Передумови
+
+- Node.js 22 або новіша версія.
+- Ідентифікатори торговця та термінала.
+- Приватний ключ і пароль до нього для підписання запитів.
+- Публічний сертифікат UPC для перевірки підпису відповіді.
+
+Пакет використовує ES-модулі. Його головний модуль експортує
+`UpcTokenService` та типи запитів, перелічені в розділі
+[Типи запитів](#типи-запитів).
+
+## Встановлення
+
+```bash
+npm install @upc/token-service
+```
+
+
+## Створення клієнта
+
+```ts
+import { readFileSync } from 'node:fs';
+import { UpcTokenService } from '@upc/token-service';
+
+const service = new UpcTokenService('test', {
+  merchantId: process.env.UPC_MERCHANT_ID!,
+  terminalId: process.env.UPC_TERMINAL_ID!,
+  privateKey: readFileSync(process.env.UPC_PRIVATE_KEY_PATH!, 'utf8'),
+  passphrase: process.env.UPC_PRIVATE_KEY_PASSWORD!,
+  publicKey: readFileSync(process.env.UPC_SERVER_CERT_PATH!, 'utf8'),
+});
+
+const response = await service.getTokenStatus({
+  trackingId: 'status-001',
+  tokenId: process.env.UPC_TOKEN_ID!,
+});
+
+console.info(response);
+```
+
+У production отримуйте секрети з відповідного сховища секретів, а не з
+збережених у репозиторії файлів. Зразок вище використовує non-null assertion
+лише для стислості: застосунок має перевірити обов’язкові змінні середовища до
+створення клієнта.
+
+### Конструктор і параметри
+
+```ts
+new UpcTokenService(resource, options);
+```
+
+| Параметр | Тип | Обов’язковий | Опис |
+| --- | --- | --- | --- |
+| `resource` | `string` | Так | `'test'`, `'production'` або власна базова HTTPS-адреса. Назви середовищ регістронезалежні. |
+| `options.merchantId` | `string` | Так | Ідентифікатор торговця, що додається до кожного запиту. |
+| `options.terminalId` | `string` | Так | Ідентифікатор термінала, що додається до кожного запиту. |
+| `options.privateKey` | `string` | Практично так | Приватний ключ для підписання JSON-запитів. У спільному типі опцій позначений як необов’язковий. |
+| `options.passphrase` | `string` | Практично так | Пароль приватного ключа, якщо він потрібен. У спільному типі опцій позначений як необов’язковий. |
+| `options.publicKey` | `string` | Так для перевірки відповіді | Публічний ключ або сертифікат UPC для перевірки підпису відповіді. |
+| `options.timeout` | `number` | Ні | Тайм-аут HTTP-запиту в мілісекундах; значення за замовчуванням — 60 000. |
+| `options.logging` | `boolean` | Ні | Діагностичне журналювання; за замовчуванням вимкнене. |
+
+Власна адреса має бути HTTPS URL лише з origin, наприклад
+`https://gateway.example:8443`. Не вказуйте шлях, query-параметри або fragment:
+клієнт сам додає шлях API. Некоректна адреса або використання HTTP призводить
+до помилки під час створення клієнта.
+
+## Методи
+
+Усі методи асинхронні, надсилають POST-запит і повертають Promise.
+
+| Метод | Параметр | Кінцева точка |
+| --- | --- | --- |
+| `createToken(request)` | `CreateTokenRequest` | `/go/token/create` |
+| `refreshToken(request)` | `RefreshTokenRequest` | `/go/token/refresh` |
+| `deleteToken(request)` | `DeleteTokenRequest` | `/go/token/delete` |
+| `getTokenStatus(request)` | `TokenRequest` | `/go/token/status` |
+| `suspendToken(request)` | `UpdateTokenRequest` | `/go/token/suspend` |
+| `resumeToken(request)` | `UpdateTokenRequest` | `/go/token/resume` |
+| `getCardContent(request)` | `CardContentRequest` | `/go/card/content` |
+| `getCardMetadata(request)` | `CardMetadataRequest` | `/go/card/metadata` |
+
+### Приклади запитів
+
+Створення токена:
+
+```ts
+import type { CreateTokenRequest } from '@upc/token-service';
+
+const createRequest: CreateTokenRequest = {
+  trackingId: 'create-001',
+  card: {
+    cardNum: process.env.UPC_CARD_NUMBER!,
+    expMonth: '03',
+    expYear: '2030',
+  },
+};
+
+const createResponse = await service.createToken(createRequest);
+```
+
+Оновлення стану або видалення токена:
+
+```ts
+import type { UpdateTokenRequest } from '@upc/token-service';
+
+const updateRequest: UpdateTokenRequest = {
+  trackingId: 'update-001',
+  tokenId: process.env.UPC_TOKEN_ID!,
+  reasonCode: 'DEVICE_LOST',
+  reason: 'Пристрій втрачено',
+};
+
+const updateResponse = await service.suspendToken(updateRequest);
+```
+
+`deleteToken()` приймає той самий набір полів, що й `UpdateTokenRequest`.
+`reasonCode` має бути одним із значень `TokenReasonCode`; для `deleteToken()`
+підтримуваний набір також перевіряється під час виконання.
+
+### Типи запитів
+
+Ці типи експортуються з головного модуля:
+
+| Тип | Поля |
+| --- | --- |
+| `TokenRequest` | `trackingId: string`, `tokenId: string` |
+| `RefreshTokenRequest` | Такі самі поля, як у `TokenRequest` |
+| `CardDetails` | `cardNum: string`, `expMonth: string`, `expYear: string`, необов’язковий `cvNum: string` |
+| `CreateTokenRequest` | `trackingId: string`, `card: CardDetails` |
+| `DeleteTokenRequest` | `TokenRequest`, `reasonCode: TokenReasonCode`, необов’язковий `reason: string` |
+| `UpdateTokenRequest` | Такі самі поля, як у `DeleteTokenRequest` |
+| `CardContentRequest` | `trackingId: string`, `contentId: string`, необов’язковий `brand: string` |
+| `CardMetadataRequest` | `trackingId: string`, `tokenId: string` |
+
+Деякі поля типів наразі не включаються в сформований запит: `cvNum` у
+`CardDetails` та `brand` у `CardContentRequest`. `createToken()` передає лише
+номер картки й термін дії; `getCardContent()` передає лише `trackingId` і
+`contentId`.
+
+`TokenReasonCode` — об’єднання таких рядкових значень:
+
+`DEVICE_LOST`, `DEVICE_STOLEN`, `SUSPECTED_FRAUD`, `ACCOUNT_CLOSED`,
+`NOT_FRAUD`, `DEVICE_FOUND`, `OTHER`.
+
+## Результат і помилки
+
+Публічні сигнатури методів оголошують результат як
+`Promise<UpcJsonResponse | UpcJsonResponseString>`. Реалізація перевіряє підпис
+відповіді та декодує її `payload` з base64url у UTF-8 рядок. Якщо потрібно
+працювати з JSON-даними, розберіть цей рядок у застосунку й окремо перевірте
+отриману структуру.
+
+Promise відхиляється, якщо сталася мережева або HTTP-помилка, отримано порожню
+чи невалідну відповідь або перевірка підпису не пройшла. Непідтримуваний
+`reasonCode` у `deleteToken()` також призводить до помилки до надсилання запиту.
+
+## Безпека
+
+- Починайте з `resource: 'test'` та тестових реквізитів UPC.
+- Не зберігайте PAN, CVV, токени, приватні ключі чи паролі в коді, логах або
+  системі контролю версій.
+- Не вмикайте `logging: true` для запитів із реальними платіжними даними:
+  діагностичні повідомлення можуть містити тіло запиту.
+- `resource: 'production'` надсилає реальні запити; використовуйте його лише
+  після налаштування production-доступу та секретів.
+
+## Збірка та тести
+
+Команди запускаються з кореня монорепозиторію:
+
+```bash
+npm run build --workspace @upc/token-service
+npm run check --workspace @upc/token-service
+npm test --workspace @upc/token-service
+```
