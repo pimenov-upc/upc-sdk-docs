@@ -74,24 +74,10 @@ export default [
         slug: "artifacts/token-service-xml"
       },
       {
-        label: "UpcTokenService",
+        label: "UpcTokenServiceJson",
         translations: translations.tokenService,
         slug: "artifacts/token-service"
       },
     ],
   },
-  // {
-  //   label: "Utility modules",
-  //   translations: translations.utilities,
-  //   collapsed: true,
-  //   items: [
-  //   ],
-  // },
-  // {
-  //   label: "Operation Codes",
-  //   translations: translations.operationCodes,
-  //   collapsed: true,
-  //   items: [
-  //   ],
-  // },
 ];

@@ -69,7 +69,7 @@ const translations = {
     uk: "UpcTokenServiceXml",
   },
   tokenService: {
-    uk: "UpcTokenService",
+    uk: "UpcTokenServiceJson",
   },
 };
 
