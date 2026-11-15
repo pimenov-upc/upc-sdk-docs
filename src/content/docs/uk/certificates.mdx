@@ -2,3 +2,149 @@
 title: Сертифікати та ключі
 slug: uk/certificates
 ---
+
+Всі запити до платіжного шлюзу UPC e-Commerce Connect підписуються цифровим підписом, на основі приватного ключа.
+
+Для роботи з UPC Service SDK вам потрібно мати згенерований сертифікат, приватний та публічний ключі, а також отримати від UPC сертифікати або публічні ключі сервера.
+
+## Генерація сертифікату та ключів
+
+Ви можете згенерувати сертифікат та ключі декількома способами:
+
+- Через сервіс генерації UPC
+- Встановивши в себе клієнт-серверний додаток
+- Вручну
+
+### Сервіс генерації сертифікату та ключів UPC
+
+Сервіс створений  як альтернатива програми OpenSSL для полегшення інтеграції торговців.
+Дозволяє легко та просто генерувати необхідні для застосування UPC e-Commerce Connect ключі та сертифікати.
+
+Для генерації скористайтеся відповідним посиланням наведеним нижче:
+
+- [Генерація сертифікату та ключів для тестового середовища](https://ecg.test.upc.ua/keymanagement)
+- [Генерація сертифікату та ключів для робочого середовища](https://secure.upc.ua/keymanagement)
+
+### Клієнт-серверний додаток (Self-hosted)
+
+Ви можете встановити на своєму сервері спеціальний додаток для генерації сертифікату та ключів.
+Завантажити додаток можна з [`GitHub репозиторію UPC`]()
+
+Додаток складається із трьох частин:
+- Серверна частина, яка генерує сертифікат та ключі
+- Web клієнт
+- Консольний клієнт
+
+:::note
+Додаток потребує встановлений OpenSSL на сервері.
+:::
+
+### Генерація сертифікату та ключів за допомогою OpenSSL
+
+Ви можете власноруч згенерувати сертифікат та ключі:
+
+- встановіть у себе OpenSSL
+- створіть конфігураційний файл `config.dat` (приклад наведено нижче)
+- використовуйте команди OpenSSL для створення сертифікату та ключів (приклад команд наведено нижче)
+
+**config.dat**
+```
+[ req ]
+prompt = no
+distinguished_name = req_distinguished_name
+
+[ req_distinguished_name ]
+# Країна
+CN = UA
+
+# Область
+ST = Kievskaya
+
+# Місто 
+L = Kiev
+
+#Назва організації
+O = UPC
+
+# Назва відділення
+OU = IT DEP.
+
+# Ім'я власника сертифікату
+CN = SERG
+
+#Email організації
+emailAddress=myaddress@myshop.com
+```
+
+**Створіть командний файл з Командами OpenSSL** (наприклад `gen-cert.ps1` для `PowerShell`)
+```shell
+openssl genrsa -out %1.pem 1024                                             
+openssl req -new -key %1.pem -x509 -days 365 -config config.dat -out %1.crt 
+openssl x509 -in %1.crt -noout -pubkey > %1.pub 
+```
+
+Запустіть командний файл командою:
+```bash
+./gen-cert.ps1 <Ваш мерчант ID>
+```
+
+Після виконання командного файлу ви отримаєте 3 (три) файли:
+- `<Ваш мерчант ID>.crt` - сертифікат
+- `<Ваш мерчант ID>.pem` - приватний ключ
+- `<Ваш мерчант ID>.pub` - публічний ключ
+
+:::note
+Файли сертифіката (`*.crt`) та публічного ключа (`*.pub`) необхідно відправити в службу підтримки UPC на ec@upc.ua, для забезпечення перевірки транзакцій від інтернет магазину.
+:::
+
+:::caution
+Зберігайте файл приватного ключа (`*.pem`) в надійному місці, без доступу до нього неуповноважених осіб.
+:::
+
+## Завантаження серверного сертифікату
+
+Скопіюйте вміст відповідного сертифіката та збережіть його в файл з розширенням `*.crt`.
+
+Якщо у вас виникли проблеми з серверними сертифікатами, зверніться в технічну підтримку UPC.
+
+### Сертифікат сервера для тестового середовища
+
+```
+-----BEGIN CERTIFICATE-----
+MIIChDCCAe0CASowDQYJKoZIhvcNAQEFBQAwgYgxCzAJBgNVBAYTAlVBMQ0wCwYD
+VQQIEwRLWUlWMQ0wCwYDVQQHEwRLWUlWMQwwCgYDVQQKEwNVUEMxEzARBgNVBAsT
+CkUtQ09NTUVSQ0UxGTAXBgNVBAMTEFVQQy5FQ09NTUVSQ0UuQ0ExHTAbBgkqhkiG
+9w0BCQEWDmVjLmhlbHBAdXBjLnVhMB4XDTA2MDMxNDE0MDIxNVoXDTA5MDEwMTE0
+MDIxNVowgYsxCzAJBgNVBAYTAlVBMRMwEQYDVQQIEwpTb21lLVN0YXRlMQ0wCwYD
+VQQHEwRLeWl2MQwwCgYDVQQKEwNVUEMxFzAVBgNVBAsTDmVDb21tZXJjZSBVbml0
+MRIwEAYDVQQDEwlTaWduYXR1cmUxHTAbBgkqhkiG9w0BCQEWDmVjLmhlbHBAdXBj
+LnVhMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCzIoeW9btImJ1X/u1DofZY
+1lGEAdDqmBKljFIlARpwyNjUb70RkZPzq1TB3SuNNJQ+1Wms2sKGu5uozoy9a2AR
+rJOsR+QJSwEcQo/th+NhhTTBNh/rPshlCX6R2Hm1yoMTvTrloxAXpDtgkeyMQdBe
+SZ991wX/EhX0zMaRG2dDSQIDAQABMA0GCSqGSIb3DQEBBQUAA4GBAMwpbjWXzoNQ
+wQcxAYaoL7uFhNDub8QnCJJjC3HvGz2Kz250hyWc3KVRSEGQ4l9sNZl1PrHUg6OP
+i4dPF01D5Nd36YIcMj5wsu3L4J77NvuLAj36ZZTPTsp0UmFdPaBa99GaeZgyfRxB
+NNNZ4iNswLcXmGStimAC/32TO4SsPn91
+-----END CERTIFICATE-----
+```
+
+### Сертифікат для робочого середовища
+
+```
+-----BEGIN CERTIFICATE-----
+MIICfTCCAeYCAQkwDQYJKoZIhvcNAQEFBQAwgYgxCzAJBgNVBAYTAlVBMQ0wCwYD
+VQQIEwRLWUlWMQ0wCwYDVQQHEwRLWUlWMQwwCgYDVQQKEwNVUEMxEzARBgNVBAsT
+CkUtQ09NTUVSQ0UxGTAXBgNVBAMTEFVQQy5FQ09NTUVSQ0UuQ0ExHTAbBgkqhkiG
+9w0BCQEWDmVjLmhlbHBAdXBjLnVhMB4XDTA1MDgwMzEzNTk0MFoXDTA4MDUyMzEz
+NTk0MFowgYQxCzAJBgNVBAYTAlVBMQ0wCwYDVQQIEwRLeWl2MQ0wCwYDVQQHEwRL
+eWl2MQwwCgYDVQQKEwNVUEMxGTAXBgNVBAsTEEUtQ29tbWVyY2UgRGVwdC4xDzAN
+BgNVBAMTBnNlcnZlcjEdMBsGCSqGSIb3DQEJARYOZWMuaGVscEB1cGMudWEwgZ8w
+DQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBANNcize8kS8kbIb3mV9tT54S3LaseLlb
+hsnMlxVwVK3Zvpnug/OAn7H0dd3z0QKH9KbX/LXpC2I0uf6TJcpRkkp9XBedIwhS
+OvAFqqvCam5K7EgpLQhm2WN7CU8G/yeHypRxk2zyR8djpHQJOGlyMqcccn0CeFos
+jUUu3Ju/e9bnAgMBAAEwDQYJKoZIhvcNAQEFBQADgYEACanXJ0K2838tRW49JloN
+NrLFR3GWFJTevs3H952TM7TN2neuEAYAB9XQ2Gk9MBrHgw4Wc2A89VK1M8rd7Mzo
+Qvz3ABE7+zRa2r/Fgg0wO2I9ixEqjBw5Q2PNrzEwqe810Mz8CPCbvOQd/eH4BDm6
+J2vxcUsUDwW7zXITB4mdW6I=
+-----END CERTIFICATE-----
+```
