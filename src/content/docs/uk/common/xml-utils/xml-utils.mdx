@@ -79,12 +79,12 @@ const payload = {
 Повторювані елементи перетворюються на масиви. Наприклад, фрагмент
 `<Reply><Code>OK</Code><Code>RETRY</Code></Reply>` дає структуру на кшталт:
 
-```ts
+```json
 {
-  Reply: {
-    Code: [
-      { '#text': 'OK' },
-      { '#text': 'RETRY' }
+  "Reply": {
+    "Code": [
+      { "#text": 'OK' },
+      { "#text": 'RETRY' }
     ]
   }
 }
@@ -111,11 +111,11 @@ const payload = {
 
 Наприклад, результат для `<Reply><Code>OK</Code><Empty/></Reply>` буде таким:
 
-```ts
+```json
 {
-  Reply: {
-    Code: 'OK',
-    Empty: ''
+  "Reply": {
+    "Code": 'OK',
+    "Empty": ''
   }
 }
 ```
