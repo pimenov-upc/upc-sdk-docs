@@ -25,11 +25,14 @@ UPC e-Commerce Connect використовує провідні світові 
 
 ## Артефакти
 
-- `UpcSignService` - реалізує підписання запитів та перевірку відповідей
-- `UpcBinInfo` - отримує інформацію про банківські BIN
-- `UpcTokenService` - реалізує взаємодію з Token Service API
-- `UpcCheckoutService` - реалізує взаємодію з Checkout Service API
-- `UpcRefund` - реалізує взаємодію з Refund Service API
+| Пакет | Клас | Опис |
+| --- | --- | --- |
+| `@upc/sign-service` | `UpcSignService` | Реалізує підписання запитів та перевірку відповідей |
+| `@upc/bin-info` | `UpcBinInfo` | Отримує інформацію про банківські BIN |
+| `@upc/token-service-xml` | `UpcTokenServiceXml` | Реалізує взаємодію з Token Service API за допомогою XML |
+| `@upc/token-service` | `UpcTokenService` | Реалізує взаємодію з Token Service API за допомогою JWS |
+| `@upc/checkout-xml` | `UpcCheckoutXml` | Реалізує взаємодію з Checkout Service API за допомогою XML |
+| `@upc/fastrefund-xml` | `UpcFastRefundXml` | Реалізує взаємодію з Refund Service API за допомогою XML |
 
 Артефакти - це `класи` та `функції`, які реалізуються відповідні методи для взаємодії з UPC E-Commerce API.
 
@@ -39,7 +42,8 @@ UPC e-Commerce Connect використовує провідні світові 
 Всі артефакти надаються в скомпільованому і готовому до використання вигляді. 
 Артефакти можна завантажити з [`GitHub`]() або встановити за допомогою `npm`.
 
-## Утиліти
+## Загальні модулі
 
-- `HttpTransport` - виконує відправку запитів і отримання відповідей.
-- `XmlUtils` - набір функцій для формування XML та перетворення його в JSON
+- `@upc/common` - реалізує загальні типи, константи і класи.
+- `@upc/http-transport` - виконує відправку запитів і отримання відповідей.
+- `@upc/xml-utils` - набір функцій для формування XML та перетворення його в JSON
