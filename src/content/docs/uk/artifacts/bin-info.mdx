@@ -73,6 +73,43 @@ console.log(result);
 
 `bin` — BIN, для якого потрібно отримати інформацію. `trackingId` необов’язковий; якщо його не передати, SDK сформує його з поточної часової позначки в мілісекундах. Порожній рядок буде переданий без заміни.
 
+Відповідь:
+```json
+{
+  "MerchantId": '1046277500',
+  "TerminalId": 'E1046277',
+  "TrackingId": 'get-bin-1',
+  "ListBinInfo": {
+    "BinInfo": [
+      {
+        "MinAccountRange": '5120700000000000000',
+        "MaxAccountRange": '5120700049999999999',
+        "CountryCode": '804',
+        "CountryName": 'Ukraine',
+        "IssuerName": 'RAIFFEISEN BANK JSC'
+      },
+      ...
+    ]
+  },
+  "Status": { "Code": '000', "Message": 'OK' },
+  "Date": '2026-11-18 10:11:41 +0200',
+  "Signature": {
+    "SignedInfo": {
+      "CanonicalizationMethod": '',
+      "SignatureMethod": '',
+      "Reference": {
+        "Transforms": {
+          "Transform": '...'
+        },
+        "DigestMethod": '...',
+        "DigestValue": '...'
+      }
+    },
+    "SignatureValue": '...'
+  }
+}
+```
+
 Щоб отримати перевірений XML-вміст як рядок, задайте значення `returnType` як `raw` або `string`:
 
 ```ts
