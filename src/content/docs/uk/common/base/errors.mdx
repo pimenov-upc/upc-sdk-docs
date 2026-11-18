@@ -3,5 +3,13 @@ title: Common errors
 slug: uk/common/base/errors
 ---
 
+:::caution[Розділ в стадії розробки...]
+:::
 
-Розділ в стадії розробки...
+Модуль `@upc/common` експортує клас помилки `UpcError`. Всі артефакти використовують цей клас для генерації помилок.
+
+```ts
+import { UpcError } from '@upc/common'
+
+throw new UpcError('Your_message', {...your_additional_data}?)
+```

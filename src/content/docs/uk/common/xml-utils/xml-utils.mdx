@@ -43,6 +43,7 @@ XML стане `A&amp;B`. Результат `xml2json` має тип `JsonObjec
 | `xml2json(xml)` | Перетворює XML-рядок у JSON-сумісний `JsonObject`. |
 | `createXmlOperation(operation, payload)` | Формує XML-документ, у якому `operation` є кореневим елементом. |
 | `createXmlRequest(operation, messageId, payload)` | Формує XML-запит UPC у конверті `ECommerceConnect` та `Message`. |
+| `createXml3DSRequest(operation, messageId, payload)` | Формує 3DS XML-запит UPC у конверті `ECommerceConnect` та `EMV3DSRequest`. |
 
 ## Типи даних
 
@@ -57,7 +58,7 @@ XML стане `A&amp;B`. Результат `xml2json` має тип `JsonObjec
 
 ```ts
 const payload = {
-  MerchantId: 'merchant-123',
+  MerchantID: 'merchant-123',
   Transaction: {
     Amount: '125.00'
   }
@@ -133,8 +134,16 @@ const payload = {
 import { createXmlOperation } from '@upc/xml-utils';
 
 const xml = createXmlOperation('LookupRequest', {
-  MerchantId: 'merchant-123'
+  MerchantID: 'merchant-123'
 });
+```
+
+XML Результат:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<LookupRequest>
+  <MerchantID>merchant-123</MerchantID>
+</LookupRequest>
 ```
 
 ### `createXmlRequest(operation, messageId, payload)`
@@ -149,6 +158,18 @@ import { createXmlRequest } from '@upc/xml-utils';
 const xml = createXmlRequest('LookupRequest', 1, {
   MerchantId: 'merchant-123'
 });
+```
+
+XML Результат:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<ECommerceConnect ...>
+  <Message id='1' version='1.0'>
+    <LookupRequest>
+      <MerchantID>merchant-123</MerchantID>
+    </LookupRequest>
+  </Message>
+</ECommerceConnect>
 ```
 
 Обидві функції екранують текстові значення XML, включно з `&`, `<`, `>`, лапками
@@ -167,6 +188,21 @@ const xml = createXmlOperation('PaymentRequest', {
 операції, ключі об’єктів і назви атрибутів використовуються як XML-імена та не
 екрануються. Передавайте для них лише коректні, довірені назви. Не вставляйте
 неперевірені дані користувача в ці позиції.
+
+XML Результат:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<ECommerceConnect ...>
+  <Message id='1' version='1.0'>
+    <PaymentRequest>
+      <Transaction Id='AUTH'>
+        <Amount>125.00</Amount>
+      </Transaction>
+    </PaymentRequest>
+  </Message>
+</ECommerceConnect>
+```
+
 
 Попри те, що тип `XmlValue` дозволяє масиви, генератор не має окремої обробки
 масивів як повторюваних XML-елементів. Не передавайте масиви до функцій

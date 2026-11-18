@@ -26,10 +26,13 @@
   },
   "homepage": "https://github.com/pimenov-upc/upc-sdk-docs#readme",
   "dependencies": {
-    "@astrojs/starlight": "^0.42.10",
-    "@expressive-code/plugin-line-numbers": "^0.44.3",
-    "astro": "^7.4.7",
+    "@astrojs/starlight": "^0.43.1",
+    "@expressive-code/plugin-collapsible-sections": "^0.44.4",
+    "@expressive-code/plugin-line-numbers": "^0.44.4",
+    "astro": "^7.4.12",
+    "expressive-code-language-badge": "^2.0.0",
+    "starlight-codeblocks": "^1.4.1",
     "starlight-links-validator": "^0.27.0",
-    "starlight-theme-rapide": "^0.6.0"
+    "starlight-theme-rapide": "^0.7.0"
   }
 }

@@ -9,12 +9,25 @@ slug: uk/common/base/constants
 
 Константа, яка визначає тестове та робоче середовища UPC E-Commerce.
 
-```ts
+```ts hidden={4-12}
 export const UPC_RESOURCE = {
   Test: 'https://ecg.test.upc.ua',
   Production: 'https://secure.upc.ua',
+  Ukraine: 'https://secure.upc.ua',
+  Serbia: 'https://ecommerce.raiffeisenbank.rs',
+  Kosovo: 'https://secure.raiffeisen-kosovo.com',
+  Albania: 'https://ecommerce.raiffeisen.al',
+  Croatia: 'https://secure.rba.hr',
+  Austria: 'https://cardpayment.rbinternational.com',
+  Bosnia: 'https://secure.rbbh.ba',
+  Hungary: 'https://secure-ecom.raiffeisen.hu',
+  Bulgaria: 'https://secure.kbcbank.bg',
 } as const;
 ```
+
+:::note
+Підтримка середовищ по країнах наразі знаходиться в розробці...
+:::
 
 ### UPC_RETURN_TYPE
 
